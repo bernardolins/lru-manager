@@ -6,6 +6,8 @@ struct PageTable IniciaTabela(int id) {
 
 	PT.ID = id;
 
+  PT.ValorWorkingset = 0;
+
 	for(i = 0; i < PAGS_MEM; i++) {
 		PT.PaginasMemoria[i].NumPagina = -1;
 	}

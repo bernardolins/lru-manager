@@ -23,11 +23,26 @@ void AtualizaReferencia(int numPagina, int posicao) {
 	
 }
 
-
 int EscolhePagina() {
 	sleep(1);
 	srand(time(NULL));
 	return rand()%NUM_PAGS;
+}
+
+bool MemoriaCheia(struct Memoria *memoria) {
+  if(memoria->FramesOcupados <= TAM_MEM) {
+    return false; 
+  }
+
+  return true;
+}
+
+bool WorkingSetLivre(struct PageTable *PT) {
+  if(PT->ValorWorkingset < PAGS_MEM) {
+    return true; 
+  }
+
+  return false;
 }
 
 void SolicitaPagina(struct Memoria *memoria, struct FRAME *areaMemoria, struct PageTable *PT, int id) {
@@ -49,10 +64,18 @@ void SolicitaPagina(struct Memoria *memoria, struct FRAME *areaMemoria, struct P
   if(PaginaNaMemoria(PT, paginaEscolhida)) {
     printf("Já está\n");
     //atualiza a referência
-  } else {
-    printf("Page fault\n");
-    memoria->FramesOcupados++;
-    printf("frames ocupados: %d\n", memoria->FramesOcupados);
+  } 
+  else {
+    if(MemoriaCheia(memoria)) {
+      printf("Faz Swap!!!!");
+    }
+    else if(WorkingSetLivre(PT)) {
+      printf("Page fault\n");
+      printf("Adiciona Nova página do processo %d na memória", id);
+      memoria->FramesOcupados++;
+      printf("frames ocupados: %d\n", memoria->FramesOcupados);
+    }
+
     //memoria cheia
   }
 

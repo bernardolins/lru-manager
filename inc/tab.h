@@ -14,6 +14,7 @@ struct PageTable {
 	int ID;
 	struct Paginas PaginasMemoria[PAGS_MEM];
 	int TabelaPaginas[NUM_PAGS];
+  int ValorWorkingset;
 };
 
 struct PageTable IniciaTabela(int id);
