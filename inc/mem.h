@@ -4,8 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef int FRAME;
+struct FRAME {
+  int NumProcesso;
+  int Pagina;
+};
 
-int* AreaDeMemoria(int nframe);
+struct FRAME* AreaDeMemoria(int nframe);
 
 #endif

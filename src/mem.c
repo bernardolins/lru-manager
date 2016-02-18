@@ -1,7 +1,7 @@
 #include<mem.h>
 
-int* AreaDeMemoria(int nframe) {
-  int* area = (int*)malloc(sizeof(int)*nframe);
+struct FRAME* AreaDeMemoria(int nframe) {
+  struct FRAME* area = (struct FRAME*)malloc(sizeof(struct FRAME)*nframe);
 
   return area;
 }
