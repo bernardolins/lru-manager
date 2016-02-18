@@ -1,6 +1,4 @@
-#include<stdio.h>
-#include<stdlib.h>
-//#include<lru.h>
+#include<lru.h>
 
 void lru(int num_window) {
 
