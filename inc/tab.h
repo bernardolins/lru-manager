@@ -8,7 +8,6 @@
 
 struct Paginas {
 	int NumPagina;
-	int Referenciada;
 };
 
 struct PageTable {
@@ -19,5 +18,6 @@ struct PageTable {
 
 struct PageTable IniciaTabela(int id);
 int GetNumPaginasMemoria();
+void ImprimeTabela(struct PageTable *PT, int id);
 
 #endif
