@@ -30,7 +30,7 @@ int EscolhePagina() {
 	return rand()%NUM_PAGS;
 }
 
-void SolicitaPagina(struct FRAME *areaMemoria, struct PageTable *PT, int id) {
+void SolicitaPagina(struct Memoria *memoria, struct FRAME *areaMemoria, struct PageTable *PT, int id) {
 	int i;
 	int paginaEscolhida = EscolhePagina();
 
@@ -43,6 +43,19 @@ void SolicitaPagina(struct FRAME *areaMemoria, struct PageTable *PT, int id) {
 		SwapOut();
 	}*/
 
+	printf("Processo[%d] solicitou pagina.\n", id);
+	printf("Pagina escolhida: %d\n", paginaEscolhida);
+
+  if(PaginaNaMemoria(PT, paginaEscolhida)) {
+    printf("Já está\n");
+    //atualiza a referência
+  } else {
+    printf("Page fault\n");
+    memoria->FramesOcupados++;
+    printf("frames ocupados: %d\n", memoria->FramesOcupados);
+    //memoria cheia
+  }
+
   //1. Verifica se página está na memória
   //  1.1 Se estiver, só atualiza a referência
   //  1.2 Senão
@@ -51,8 +64,6 @@ void SolicitaPagina(struct FRAME *areaMemoria, struct PageTable *PT, int id) {
   //        1.2.1.2.1 Faz swap
   //      1.2.1.3 Se tem espaço na memória e tamanho do workingset = 4 faz o lru
 
-	printf("Processo[%d] solicitou pagina.\n", id);
-	printf("Pagina escolhida: %d\n", paginaEscolhida);
 
 	for(i = id; i < TAM_MEM; i += 5) {
 		areaMemoria[i].NumProcesso = id;
@@ -70,6 +81,8 @@ struct Memoria InicializaMemoria() {
   int i;
 
   struct Memoria memoria;
+
+  memoria.FramesOcupados = 0;
 
   for(i = 0; i < NUM_PROC; i++) {
     memoria.ListaDeProcessos[i] = -1;

@@ -18,6 +18,7 @@ struct FRAME {
 };
 
 struct Memoria {
+  int FramesOcupados;
   int ListaDeProcessos[NUM_PROC];
   struct PageTable ListaDePaginas[NUM_PROC];
 };
@@ -28,7 +29,7 @@ struct FRAME* AreaDeMemoria(int nframe);
 bool PaginaNaMemoria(struct PageTable *PT, int paginaEscolhida);
 void AtualizaReferencia(int numPagina, int posicao);
 int EscolhePagina();
-void SolicitaPagina(struct FRAME *areaMemoria, struct PageTable *PT, int id);
+void SolicitaPagina(struct Memoria *memoria, struct FRAME *areaMemoria, struct PageTable *PT, int id);
 void ImprimeMemoria(struct FRAME *areaMemoria, int tamanho);
 
 #endif
