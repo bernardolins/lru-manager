@@ -31,7 +31,6 @@ void ImprimeTabela(struct PageTable *PT, int id) {
 void *processo(void *arg) {
 	int id = *(int*)arg;
 	int i;
-	int numPagsMemoria = GetNumPaginasMemoria();
 	printf("Processo[%d] inicializou!\n", id);
 	struct PageTable PT = IniciaTabela(id);
 	ImprimeTabela(&PT, id);
