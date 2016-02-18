@@ -1,15 +1,19 @@
-#include<lru.h>
+#include<stdio.h>
+#include<stdlib.h>
+//#include<lru.h>
 
 void lru(int num_window) {
 
-	int page[100] = {0},frame[50][2] = {0},i=0,j,k=0,l=0,n,a,found,pf=0,x,min,ch;
+	int page[100] = {0};
+	int frame[50][2] = {0},i=0,j,k=0,l=0,n,a,found,pf=0,x,min,ch;
         char c;
-        FILE *fp;
-        fp=fopen("fifo.txt","r");
-        while(fscanf(fp,"%d%c",&a,&c)!=EOF){page[i++]=a;}
-
+        //FILE *fp;
+        //fp=fopen("fifo.txt","r");
+        //while(fscanf(fp,"%d%c",&a,&c)!=EOF){page[i++]=a;}
+	
+	int page[100] = {7,7,4,4,2,1,4,1,5,3,2,1,4,7,6,1,9,8,0,1,7,7,4,7,7,4,4,2,1,4,1,5,3,2,1,4,7,6,1,9,8,0,1,7,7,4,7,7,4,4,2,1,4,1,5,3,2,1,4,7,6,1,9,8,0,1,7,7,4,10,11,50};
         n=i;k=1,found=0;
-
+	for(int b = 0; b < 100; b++) printf("%d ", page[b]);
 	for(i=0;i<num_window;i++){
                 frame[i][0]=0;
                 frame[i][1]=-1;
