@@ -7,7 +7,6 @@
 #include<tab.h>
 #include<mem.h>
 
-#define NUM_PROC 5
 #define NUM_PAG 10
 #define TAM_MEM 64
 
@@ -15,7 +14,25 @@ pthread_mutex_t mutex;
 
 
 struct FRAME *memoria;
+struct Memoria memProcessos;
+
 int *frameLivre;
+
+//void PreencheTabela(struct PageTable *pt, int id) {
+//  int i;
+//
+//  for(i = 0; i < NUM_PAGS; i++) {
+//    pt->TabelaPaginas[i] = id;
+//  }
+//}
+
+//void imprimeMem(struct Memoria *mem) {
+//  int i = 0;
+//
+//  for(i = 0; i < NUM_PROC; i++) {
+//    ImprimeTabela(&mem->ListaDePaginas[i], i);
+//  } 
+//}
 
 void *processo(void *arg) {
 	int id = *(int*)arg;
@@ -23,6 +40,9 @@ void *processo(void *arg) {
 	printf("Processo[%d] inicializou!\n", id);
 
 	struct PageTable PT = IniciaTabela(id);
+  //PreencheTabela(&PT, id);
+  memProcessos.ListaDePaginas[id] = PT;
+
 
 	pthread_mutex_lock(&mutex);
 	SolicitaPagina(memoria, &PT, id);
@@ -42,7 +62,9 @@ int main(int argc, char **argv) {
 
 	//==============================
 	memoria = AreaDeMemoria(TAM_MEM);
+  memProcessos = InicializaMemoria();
 	//==============================
+  //
 	for(i = 0; i < NUM_PROC; i++) {
 		arg = malloc(sizeof(int));
 		*arg = i;
@@ -59,7 +81,9 @@ int main(int argc, char **argv) {
 			exit(-1);
 		}
 	}
+
 	//ImprimeMemoria(memoria, TAM_MEM);
+  //imprimeMem(&memProcessos);
 	
 	free(arg); free(memoria);
 	pthread_mutex_destroy(&mutex);
