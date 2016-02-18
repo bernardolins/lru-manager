@@ -6,5 +6,6 @@
 
 typedef int FRAME;
 
-int* mem_area(int nframe);
+int* AreaDeMemoria(int nframe);
+
 #endif
