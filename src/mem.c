@@ -68,13 +68,20 @@ void SolicitaPagina(struct Memoria *memoria, struct FRAME *areaMemoria, struct P
   else {
     if(MemoriaCheia(memoria)) {
       printf("Faz Swap!!!!");
+      //swap();
     }
-    else if(WorkingSetLivre(PT)) {
-      printf("Page fault\n");
-      printf("Adiciona Nova página do processo %d na memória", id);
-      memoria->FramesOcupados++;
-      printf("frames ocupados: %d\n", memoria->FramesOcupados);
-    }
+
+    InsereProcessoNaMemoria(memoria, PT);
+    //lru();
+
+    //else if(WorkingSetLivre(PT)) {
+    //  printf("Page fault\n");
+    //  printf("Adiciona nova página do processo %d na memória\n", id);
+    //  //Adiciona página na memória
+    //  //Atualiza referências no workingset
+    //  memoria->FramesOcupados++;
+    //  printf("frames ocupados: %d\n", memoria->FramesOcupados);
+    //}
 
     //memoria cheia
   }
@@ -100,16 +107,50 @@ void ImprimeMemoria(struct FRAME *areaMemoria, int tamanho) {
 	}
 }
 
+void ImprimeMemoriaProcessos(struct Memoria *memoria) {
+  int tamanho = 20;
+	int i;
+	for(i = 0; i < tamanho; i++) {
+		printf("[\t%d\t]\n", memoria->ListaDeProcessos[i]);
+	}
+}
+
 struct Memoria InicializaMemoria() {
   int i;
 
   struct Memoria memoria;
 
   memoria.FramesOcupados = 0;
+  memoria.ProcessoMaisAntigo = 0;
+  memoria.ProcessosNaMemoria = 0;
 
   for(i = 0; i < NUM_PROC; i++) {
     memoria.ListaDeProcessos[i] = -1;
   }
 
   return memoria;
+}
+
+void InsereProcessoNaMemoria(struct Memoria *memoria, struct PageTable *PT) {
+  if(PT->ValorWorkingset == 0) {
+    memoria->ListaDeProcessos[memoria->ProcessosNaMemoria] = PT->ID;
+    memoria->ProcessosNaMemoria++;
+  }
+}
+
+void Swap(struct Memoria *memoria, struct FRAME *memPrincipal) {
+  int i;
+  int id = memoria->ListaDeProcessos[memoria->ProcessoMaisAntigo];
+
+  struct PageTable tabela = memoria->ListaDePaginas[id];
+  
+  for(i = 0; i < tabela.ValorWorkingset; i++) {
+    int pagina = tabela.PaginasMemoria[i]; 
+    int endereco = memoria.TabelaPaginas[pagina];
+
+    memPrincipal[endereco]->NumProcesso = -1;
+    memPrincipal[endereco]->Pagina = -1;
+  }
+
+  memoria->ProcessoMaisAntigo = (memoria->ProcessoMaisAntigo + 1)% 20;
 }

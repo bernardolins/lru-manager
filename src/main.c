@@ -8,7 +8,6 @@
 #include<mem.h>
 
 #define NUM_PAG 10
-#define TAM_MEM 64
 
 pthread_mutex_t mutex;
 
@@ -84,6 +83,7 @@ int main(int argc, char **argv) {
 
 	//ImprimeMemoria(memoria, TAM_MEM);
   //imprimeMem(&memProcessos);
+  ImprimeMemoriaProcessos(&memProcessos);
 	
 	free(arg); free(memoria);
 	pthread_mutex_destroy(&mutex);

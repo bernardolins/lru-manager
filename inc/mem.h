@@ -10,7 +10,7 @@
 
 #define TAM_MEM 64
 
-#define NUM_PROC 5
+#define NUM_PROC 20
 
 struct FRAME {
   int NumProcesso;
@@ -20,6 +20,8 @@ struct FRAME {
 struct Memoria {
   int FramesOcupados;
   int ListaDeProcessos[NUM_PROC];
+  int ProcessoMaisAntigo;
+  int ProcessosNaMemoria;
   struct PageTable ListaDePaginas[NUM_PROC];
 };
 
@@ -31,5 +33,9 @@ void AtualizaReferencia(int numPagina, int posicao);
 int EscolhePagina();
 void SolicitaPagina(struct Memoria *memoria, struct FRAME *areaMemoria, struct PageTable *PT, int id);
 void ImprimeMemoria(struct FRAME *areaMemoria, int tamanho);
+
+void InsereProcessoNaMemoria(struct Memoria *memoria, struct PageTable *PT);
+
+void ImprimeMemoriaProcessos(struct Memoria *memoria);
 
 #endif
