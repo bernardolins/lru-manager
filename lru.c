@@ -9,9 +9,9 @@ void lru(int num_window){
         char c;
         FILE *fp;
         fp=fopen("fifo.txt","r");
-        while(fscanf(fp,"%d%c",&a,&c)!=EOF)
-                page[i++]=a;
-                n=i;k=1,found=0;
+        while(fscanf(fp,"%d%c",&a,&c)!=EOF){page[i++]=a;}
+
+        n=i;k=1,found=0;
 
 	for(i=0;i<num_window;i++){
                 frame[i][0]=0;
@@ -20,35 +20,37 @@ void lru(int num_window){
 
         for(i=0;i<n;i++){
                 found=0;
-                for(j=0;j<num_window;j++)
-                if(page[i]==frame[j][1]){
-                        found=1;
-                        x=j;
-                        frame[x][0]=k++;
-                }
+                for(j=0;j<num_window;j++){
+                	if(page[i]==frame[j][1]){
+                        	found=1;
+                        	x=j;
+                        	frame[x][0]=k++;
+                	}
+		}
                 if(found==0){
-                        min=n+1;
-                        for(j=0;j<num_window;j++)
-                                if(min>frame[j][0]){
-                                        min=frame[j][0];
-                                        x=j;
-                                }
-                        frame[x][1]=page[i];
-                        frame[x][0]=k++;
-                        pf++;
+                       	min=n+1;
+                       	for(j=0;j<num_window;j++){
+                               	if(min>frame[j][0]){
+                                       	min=frame[j][0];
+                                       	x=j;
+                               	}
+			}
+                       	frame[x][1]=page[i];
+                       	frame[x][0]=k++;
+                       	pf++;
                 }
 
                 for(l=0;l<num_window;l++){
-                        if(frame[l][1]==-1)
-                                printf("|  ");
-                        else
-                                printf("|%d ",frame[l][1]);
+                       	if(frame[l][1]==-1)
+                               	printf("|  ");
+                       	else
+                               	printf("|%d ",frame[l][1]);
                 }
                 if(found==0)
-                        printf("Page Fault\n");
+                       	printf("Page Fault\n");
                 else
-                        printf("No page fault\n");
-                        printf("\n\n");
+                       	printf("No page fault\n");
+                       	printf("\n\n");
 	}
         printf("\nTotal page faults=%d\n",pf);
         pf=0;
