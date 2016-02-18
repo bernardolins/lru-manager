@@ -9,7 +9,7 @@ OBJ=obj
 INCCMD=-I$(INC)
 FLAGS=-Wall -pthread
 
-OBJS=$(OBJ)/main.o $(OBJ)/lru.o $(OBJ)/mem.o $(OBJ)/tab.o
+OBJS=$(OBJ)/main.o $(OBJ)/mem.o $(OBJ)/tab.o
 
 build: clean setup $(OBJS)
 	$(CC) -o $(BIN)/$(BINARY) $(OBJS) $(INCCMD) $(FLAGS)
@@ -25,8 +25,8 @@ clean:
 $(OBJ)/main.o:
 	$(CC) -o $(OBJ)/main.o -c $(SRC)/main.c $(INCCMD) $(FLAGS)
 
-$(OBJ)/lru.o:
-	$(CC) -o $(OBJ)/lru.o -c $(SRC)/lru.c $(INCCMD) $(FLAGS)
+#$(OBJ)/lru.o:
+#	$(CC) -o $(OBJ)/lru.o -c $(SRC)/lru.c $(INCCMD) $(FLAGS)
 
 $(OBJ)/mem.o:
 	$(CC) -o $(OBJ)/mem.o -c $(SRC)/mem.c $(INCCMD) $(FLAGS)
