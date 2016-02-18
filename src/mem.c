@@ -1,6 +1,7 @@
-#include<mem.c>
+#include<mem.h>
 
-int* area(int nframe) {
+int* mem_area(int nframe) {
   int* area = (int*)malloc(sizeof(int)*nframe);
+
   return area;
 }

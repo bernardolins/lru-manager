@@ -1,7 +1,10 @@
 #ifndef MEM
 #define MEM
 
+#include <stdio.h>
+#include <stdlib.h>
+
 typedef int FRAME;
 
-int* area(int nframe);
+int* mem_area(int nframe);
 #endif
