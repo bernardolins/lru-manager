@@ -1,7 +1,14 @@
 #ifndef MEM
 #define MEM
 
-typedef int FRAME;
+#include <stdio.h>
+#include <stdlib.h>
 
-int* area(int nframe);
+struct FRAME {
+  int NumProcesso;
+  int Pagina;
+};
+
+struct FRAME* AreaDeMemoria(int nframe);
+
 #endif

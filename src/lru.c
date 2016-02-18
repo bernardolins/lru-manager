@@ -1,9 +1,6 @@
-/* C program to implement least recently used algorithm */
+#include<lru.h>
 
-#include<stdio.h> 
-#include<stdlib.h>
-
-void lru(int num_window){
+void lru(int num_window) {
 
 	int page[100] = {0},frame[50][2] = {0},i=0,j,k=0,l=0,n,a,found,pf=0,x,min,ch;
         char c;
