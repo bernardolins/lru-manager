@@ -1,11 +1,13 @@
 #include<mem.h>
 #include<stdio.h>
 #include<time.h>
-#include"tab.h"
+#include<tab.h>
 #include<stdbool.h>
 
 struct FRAME* AreaDeMemoria(int nframe) {
   struct FRAME* area = (struct FRAME*)malloc(sizeof(struct FRAME)*nframe);
+  return area;
+}
 
 
 bool PaginaNaMemoria(struct PageTable *PT, int paginaEscolhida) {
@@ -29,9 +31,7 @@ int EscolhePagina() {
 	return rand()%NUM_PAGS;
 }
 
-
-
-void SolicitaPagina(int *areaMemoria, struct PageTable *PT, int id) {
+void SolicitaPagina(struct FRAME *areaMemoria, struct PageTable *PT, int id) {
 	int i;
 	int paginaEscolhida = EscolhePagina();
 	(PaginaNaMemoria(PT, paginaEscolhida)) ?  : printf("Page fault!\n");
@@ -45,13 +45,13 @@ void SolicitaPagina(int *areaMemoria, struct PageTable *PT, int id) {
 	printf("Processo[%d] solicitou pagina.\n", id);
 	printf("Pagina escolhida: %d\n", paginaEscolhida);
 	for(i = id; i < TAM_MEM; i += 5) {
-		areaMemoria[i] = id;
+		areaMemoria[i].NumProcesso = id;
 	}
 }
 
-void ImprimeMemoria(int *areaMemoria, int tamanho) {
+void ImprimeMemoria(struct FRAME *areaMemoria, int tamanho) {
 	int i;
 	for(i = 0; i < tamanho; i++) {
-		printf("[\t%d\t]\n", areaMemoria[i]);
+		printf("[\t%d\t]\n", areaMemoria[i].Pagina);
 	}
 }

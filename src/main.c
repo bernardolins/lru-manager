@@ -2,7 +2,10 @@
 #include<stdlib.h>
 #include<pthread.h>
 #include<time.h>
-#include"tab.h"
+#include<unistd.h>
+
+#include<tab.h>
+#include<mem.h>
 
 #define NUM_PROC 5
 #define NUM_PAG 10
@@ -11,22 +14,22 @@
 pthread_mutex_t mutex;
 
 
-int *memoria;
+struct FRAME *memoria;
 int *frameLivre;
 
 void *processo(void *arg) {
 	int id = *(int*)arg;
-	int i;
+
 	printf("Processo[%d] inicializou!\n", id);
+
 	struct PageTable PT = IniciaTabela(id);
-	while(i < 5) {
+
 	pthread_mutex_lock(&mutex);
 	SolicitaPagina(memoria, &PT, id);
 	pthread_mutex_unlock(&mutex);
 	//ImprimeTabela(&PT, id);
-	sleep(3); i++;
-	}
-	//(&PT, id);
+	sleep(3); 	
+
 	pthread_exit(NULL);
 
 }

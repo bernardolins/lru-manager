@@ -7,11 +7,12 @@ struct PageTable IniciaTabela(int id) {
 	PT.ID = id;
 
 	for(i = 0; i < PAGS_MEM; i++) {
-		PT.PaginasMemoria[i] = 0;
+		PT.PaginasMemoria[i].NumPagina = -1;
+		PT.PaginasMemoria[i].Referenciada = -1;
 	}
 
 	for(i = 0; i < NUM_PAGS; i++) {
-		PT.TabelaPaginas[i] = 0;
+		PT.TabelaPaginas[i] = -1;
 	}
 	
 	return PT;	
@@ -37,7 +38,7 @@ void ImprimeTabela(struct PageTable *PT, int id) {
 	}
 	printf("]\n\nTabela de Paginas:\n");
 	printf("[  Num Pagina\t|    Num Frame\t]\n");
-	for(i = 0; i < NUM_PAG; i++) {
+	for(i = 0; i < NUM_PAGS; i++) {
 		printf("[\t%d\t|\t\t]\n", PT->TabelaPaginas[i]);
 	}
 	printf("\n=======================================\n");		
