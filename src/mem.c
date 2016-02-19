@@ -35,8 +35,6 @@ struct Memoria InicializaMemoria() {
     memoria.Posicoes[i] = 0;
   }
 
-
-
   return memoria;
 }
 
@@ -70,8 +68,8 @@ void SolicitaPagina(struct Memoria *memoria, struct FRAME *memPrincipal, struct 
 	printf(KBLU "Processo[%d] solicitou pagina %d\n" KWHT, id, paginaEscolhida);
 
 
-  LRU(paginaEscolhida, memoria, memPrincipal, PT);
   InsereProcessoNaMemoria(memoria, memPrincipal, PT);
+  LRU(paginaEscolhida, memoria, memPrincipal, PT);
 
   //if(PaginaNaMemoria(PT, paginaEscolhida)) {
   //  printf(KGRN "--- Página já está na memória\n" KWHT);
