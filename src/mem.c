@@ -58,7 +58,7 @@ void SolicitaPagina(struct Memoria *memoria, struct FRAME *areaMemoria, struct P
 
   if(PaginaNaMemoria(PT, paginaEscolhida)) {
     printf(KGRN "--- Página já está na memória\n" KWHT);
-    LRU(id, memoria, areaMemoria, PT);
+    LRU(paginaEscolhida, memoria, areaMemoria, PT);
   } 
   else {
     printf(KRED "--- Page fault\n" KWHT);
@@ -67,7 +67,7 @@ void SolicitaPagina(struct Memoria *memoria, struct FRAME *areaMemoria, struct P
     }
 
     InsereProcessoNaMemoria(memoria, PT);
-    LRU(id, memoria, areaMemoria, PT);
+    LRU(paginaEscolhida, memoria, areaMemoria, PT);
   }
 
   printf("--- Frames da memória principal ocupados: %d\n", memoria->FramesOcupados);
@@ -138,23 +138,56 @@ void Swap(struct Memoria *memoria, struct FRAME *memPrincipal) {
 
 void ShiftPaginas(struct PageTable *PT) {
   int i;
-  for(i = 0; i < PT->ValorWorkingset-2; i++) {
+  for(i = 0; i < PT->ValorWorkingset-1; i++) {
     PT->PaginasMemoria[i-1] = PT->PaginasMemoria[i]; 
   }
 }
 
-void LRU(int pagina, struct Memoria *memoria, struct FRAME* memPrincipal, struct PageTable *PT) {
-  if(PT->ValorWorkingset < PAGS_MEM) {
-    PT->PaginasMemoria[PT->ValorWorkingset].NumPagina = pagina; 
-    PT->ValorWorkingset++;
-    memoria->FramesOcupados++;
-  } else {
-    printf(KYEL "--- Workingset cheio.\n" KWHT);
-    ShiftPaginas(PT); 
-    PT->PaginasMemoria[PT->ValorWorkingset-1].NumPagina = pagina; 
+void imprimeWorkingset(struct PageTable *PT) {
+  int i;
+  printf("[ ");
+  for(i = 0; i < PT->ValorWorkingset; i++) {
+    printf("%d ", PT->PaginasMemoria[i].NumPagina);
   }
+
+  printf("]\n");
+}
+
+void LRU(int pagina, struct Memoria *memoria, struct FRAME* memPrincipal, struct PageTable *PT) {
+  printf("\t---- Workingset antes: ");
+  imprimeWorkingset(PT);
+  
+  if(PT->ValorWorkingset < PAGS_MEM) {
+    if(PaginaNaMemoria(PT, pagina)) {
+      AtualizaReferencia(pagina, PT);   
+    } else {
+      PT->PaginasMemoria[PT->ValorWorkingset].NumPagina = pagina; 
+      PT->ValorWorkingset++;
+      memoria->FramesOcupados++;
+    }
+  } else {
+    if(PaginaNaMemoria(PT, pagina)) {
+      AtualizaReferencia(pagina, PT);   
+    } else {
+      printf(KYEL "--- Workingset cheio.\n" KWHT);
+      ShiftPaginas(PT); 
+      PT->PaginasMemoria[PT->ValorWorkingset-1].NumPagina = pagina; 
+    }
+  }
+
+
+
+  printf("\t---- Workingset depois: ");
+  imprimeWorkingset(PT);
 }
 
 void AtualizaReferencia(int pagina, struct PageTable *PT) {
-  
+  int i;
+  for(i = 0; i < PT->ValorWorkingset-1; i++) {
+    if(PT->PaginasMemoria[i].NumPagina == pagina) {
+      int copo = PT->PaginasMemoria[i+1].NumPagina;
+      PT->PaginasMemoria[i+1].NumPagina = PT->PaginasMemoria[i].NumPagina;
+      PT->PaginasMemoria[i].NumPagina = copo;
+    }
+  }
 }
