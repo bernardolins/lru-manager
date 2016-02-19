@@ -4,7 +4,7 @@
 #include<stdio.h>
 
 #define PAGS_MEM 4
-#define NUM_PAGS 10
+#define NUM_PAGS 50
 
 struct Paginas {
 	int NumPagina;
