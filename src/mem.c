@@ -154,6 +154,7 @@ void imprimeWorkingset(struct PageTable *PT) {
 }
 
 void LRU(int pagina, struct Memoria *memoria, struct FRAME* memPrincipal, struct PageTable *PT) {
+
   printf("\t---- Workingset antes: ");
   imprimeWorkingset(PT);
   
@@ -170,8 +171,8 @@ void LRU(int pagina, struct Memoria *memoria, struct FRAME* memPrincipal, struct
       AtualizaReferencia(pagina, PT);   
     } else {
       printf(KYEL "--- Workingset cheio.\n" KWHT);
-      ShiftPaginas(PT); 
-      PT->PaginasMemoria[PT->ValorWorkingset-1].NumPagina = pagina; 
+      PT->PaginasMemoria[0].NumPagina = pagina; 
+      AtualizaReferencia(pagina, PT);
     }
   }
 
