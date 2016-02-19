@@ -68,22 +68,22 @@ void SolicitaPagina(struct Memoria *memoria, struct FRAME *memPrincipal, struct 
 	printf(KBLU "Processo[%d] solicitou pagina %d\n" KWHT, id, paginaEscolhida);
 
 
-  InsereProcessoNaMemoria(memoria, memPrincipal, PT);
-  LRU(paginaEscolhida, memoria, memPrincipal, PT);
+  //InsereProcessoNaMemoria(memoria, memPrincipal, PT);
+  //LRU(paginaEscolhida, memoria, memPrincipal, PT);
 
-  //if(PaginaNaMemoria(PT, paginaEscolhida)) {
-  //  printf(KGRN "--- Página já está na memória\n" KWHT);
-  //  LRU(paginaEscolhida, memoria, memPrincipal, PT);
-  //} 
-  //else {
-  //  printf(KRED "--- Page fault\n" KWHT);
-  //  if(MemoriaCheia(memoria)) {
-  //    Swap(memoria, memPrincipal);
-  //  }
+  if(PaginaNaMemoria(PT, paginaEscolhida)) {
+    printf(KGRN "--- Página já está na memória\n" KWHT);
+    LRU(paginaEscolhida, memoria, memPrincipal, PT);
+  } 
+  else {
+    printf(KRED "--- Page fault\n" KWHT);
+    if(MemoriaCheia(memoria)) {
+      Swap(memoria, memPrincipal);
+    }
 
-  //  InsereProcessoNaMemoria(memoria, PT);
-  //  LRU(paginaEscolhida, memoria, memPrincipal, PT);
-  //}
+    InsereProcessoNaMemoria(memoria, memPrincipal, PT);
+    LRU(paginaEscolhida, memoria, memPrincipal, PT);
+  }
 
   printf("--- Frames da memória principal ocupados: %d\n", memoria->FramesOcupados);
   printf("\n");
@@ -92,7 +92,7 @@ void SolicitaPagina(struct Memoria *memoria, struct FRAME *memPrincipal, struct 
 int PrimeiraPosicaoVazia(struct Memoria *memoria) {
   int i;
   for(i = 0; i < TAM_MEM; i++) {
-    if(memoria->Posicoes[i] == 1) {
+    if(memoria->Posicoes[i] == 0) {
       return i;
     } 
   }
@@ -101,32 +101,35 @@ int PrimeiraPosicaoVazia(struct Memoria *memoria) {
 }
 
 void InsereProcessoNaMemoria(struct Memoria *memoria, struct FRAME* memPrincipal, struct PageTable *PT) {
-  //if(PT->ValorWorkingset == 0) {
-  //  memoria->ListaDeProcessos[memoria->ProcessosNaMemoria] = PT->ID;
-  //  memoria->ProcessosNaMemoria++;
-  //}
-
   if(PT->ValorWorkingset == 0) {
-    if(MemoriaCheia(memoria)) {
-      Swap(memoria, memPrincipal);
-    }
-
-    int posicao = PrimeiraPosicaoVazia(memoria);
-
-    memPrincipal[posicao].NumProcesso = PT->ID;
-    memPrincipal[posicao].Pagina = PT->PaginasMemoria[0].NumPagina;
-
     memoria->ListaDeProcessos[memoria->ProcessosNaMemoria] = PT->ID;
     memoria->ProcessosNaMemoria++;
-    memoria->Posicoes[posicao] = 1;
   }
+//  if(MemoriaCheia(memoria)) {
+//    Swap(memoria, memPrincipal);
+//  }
+//
+//  if(PT->ValorWorkingset == 0) {
+//    if(MemoriaCheia(memoria)) {
+//      Swap(memoria, memPrincipal);
+//    }
+//
+//    int posicao = PrimeiraPosicaoVazia(memoria);
+//
+//    memPrincipal[posicao].NumProcesso = PT->ID;
+//    memPrincipal[posicao].Pagina = PT->PaginasMemoria[0].NumPagina;
+//
+//    memoria->ListaDeProcessos[memoria->ProcessosNaMemoria] = PT->ID;
+//    memoria->ProcessosNaMemoria++;
+//    memoria->Posicoes[posicao] = 1;
+//  }
 }
 
 void Swap(struct Memoria *memoria, struct FRAME *memPrincipal) {
   int i;
   int id = memoria->ListaDeProcessos[memoria->ProcessoMaisAntigo];
 
-  printf("--- Fazendo Swap. Sai o processo %d\n", id);
+  printf(KMAG "--- Fazendo Swap. Sai o processo %d\n" KWHT, id);
 
   struct PageTable *tabela = memoria->ListaDePaginas[id];
   
