@@ -22,7 +22,7 @@ struct Memoria {
   int ListaDeProcessos[NUM_PROC];
   int ProcessoMaisAntigo;
   int ProcessosNaMemoria;
-  struct PageTable ListaDePaginas[NUM_PROC];
+  struct PageTable *ListaDePaginas[NUM_PROC];
 };
 
 struct Memoria InicializaMemoria();

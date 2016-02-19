@@ -35,7 +35,7 @@ int EscolhePagina() {
 }
 
 bool MemoriaCheia(struct Memoria *memoria) {
-  if(memoria->FramesOcupados <= TAM_MEM) {
+  if(memoria->FramesOcupados < TAM_MEM) {
     return false; 
   }
 
@@ -119,12 +119,12 @@ void Swap(struct Memoria *memoria, struct FRAME *memPrincipal) {
 
   printf("--- Fazendo Swap. Sai o processo %d\n", id);
 
-  struct PageTable tabela = memoria->ListaDePaginas[id];
+  struct PageTable *tabela = memoria->ListaDePaginas[id];
   
-  for(i = 0; i < tabela.ValorWorkingset; i++) {
+  for(i = 0; i < tabela->ValorWorkingset; i++) {
 
-    int pagina = tabela.PaginasMemoria[i].NumPagina; 
-    int endereco = tabela.TabelaPaginas[pagina];
+    int pagina = tabela->PaginasMemoria[i].NumPagina; 
+    int endereco = tabela->TabelaPaginas[pagina];
 
     memPrincipal[endereco].NumProcesso = -1;
     memPrincipal[endereco].Pagina = -1;

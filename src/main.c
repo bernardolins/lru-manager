@@ -40,7 +40,7 @@ void *processo(void *arg) {
 
 	struct PageTable PT = IniciaTabela(id);
   //PreencheTabela(&PT, id);
-  memProcessos.ListaDePaginas[id] = PT;
+  memProcessos.ListaDePaginas[id] = &PT;
 
   while(1) {
 	  pthread_mutex_lock(&mutex);
