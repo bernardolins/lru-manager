@@ -47,7 +47,7 @@ void *processo(void *arg) {
 	  SolicitaPagina(&memProcessos, memoria, &PT, id);
 	  pthread_mutex_unlock(&mutex);
 	  //ImprimeTabela(&PT, id);
-    //ImprimeMemoria(memoria, 64);
+    ImprimeMemoria(memoria, 64);
 	  sleep(3); 	
   }
 

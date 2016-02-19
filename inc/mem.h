@@ -18,6 +18,7 @@ struct FRAME {
 };
 
 struct Memoria {
+  int Posicoes[TAM_MEM];
   int FramesOcupados;
   int ListaDeProcessos[NUM_PROC];
   int ProcessoMaisAntigo;
@@ -25,16 +26,24 @@ struct Memoria {
   struct PageTable *ListaDePaginas[NUM_PROC];
 };
 
-struct Memoria InicializaMemoria();
 struct FRAME* AreaDeMemoria(int nframe);
+struct Memoria InicializaMemoria();
 
 bool PaginaNaMemoria(struct PageTable *PT, int paginaEscolhida);
 int EscolhePagina();
-void SolicitaPagina(struct Memoria *memoria, struct FRAME *areaMemoria, struct PageTable *PT, int id);
-void ImprimeMemoria(struct FRAME *areaMemoria, int tamanho);
-void InsereProcessoNaMemoria(struct Memoria *memoria, struct PageTable *PT);
-void ImprimeMemoriaProcessos(struct Memoria *memoria);
+void SolicitaPagina(struct Memoria *memoria, struct FRAME *memPrincipal, struct PageTable *PT, int id);
+
+void InsereProcessoNaMemoria(struct Memoria *memoria, struct FRAME* memPrincipal, struct PageTable *PT);
+
+int PrimeiraPosicaoVazia(struct Memoria *memoria);
+
 void Swap(struct Memoria *memoria, struct FRAME *memPrincipal);
+
 void LRU(int pagina, struct Memoria *memoria, struct FRAME *memPrincipal, struct PageTable *PT);
 void AtualizaReferencia(int numPagina, struct PageTable *PT);
+
+void ImprimeMemoriaProcessos(struct Memoria *memoria);
+void ImprimeWorkingset(struct PageTable *PT);
+void ImprimeMemoria(struct FRAME *memPrincipal, int tamanho);
+
 #endif
