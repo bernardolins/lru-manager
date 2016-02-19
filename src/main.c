@@ -42,12 +42,16 @@ void *processo(void *arg) {
   //PreencheTabela(&PT, id);
   memProcessos.ListaDePaginas[id] = PT;
 
+  while(1) {
+	  pthread_mutex_lock(&mutex);
+	  SolicitaPagina(&memProcessos, memoria, &PT, id);
+	  pthread_mutex_unlock(&mutex);
+	  //ImprimeTabela(&PT, id);
+    //ImprimeMemoria(memoria, 64);
+	  sleep(3); 	
+  }
 
-	pthread_mutex_lock(&mutex);
-	SolicitaPagina(&memProcessos, memoria, &PT, id);
-	pthread_mutex_unlock(&mutex);
-	//ImprimeTabela(&PT, id);
-	sleep(3); 	
+
 
 	pthread_exit(NULL);
 

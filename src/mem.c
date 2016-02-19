@@ -4,6 +4,15 @@
 #include<tab.h>
 #include<stdbool.h>
 
+#define KNRM  "\x1B[0m"
+#define KRED  "\x1B[31m"
+#define KGRN  "\x1B[32m"
+#define KYEL  "\x1B[33m"
+#define KBLU  "\x1B[34m"
+#define KMAG  "\x1B[35m"
+#define KCYN  "\x1B[36m"
+#define KWHT  "\x1B[37m"
+
 struct FRAME* AreaDeMemoria(int nframe) {
   struct FRAME* area = (struct FRAME*)malloc(sizeof(struct FRAME)*nframe);
   return area;
@@ -17,10 +26,6 @@ bool PaginaNaMemoria(struct PageTable *PT, int paginaEscolhida) {
 		}
 	}
 	return false;
-}
-
-void AtualizaReferencia(int numPagina, int posicao) {
-	
 }
 
 int EscolhePagina() {
@@ -46,65 +51,35 @@ bool WorkingSetLivre(struct PageTable *PT) {
 }
 
 void SolicitaPagina(struct Memoria *memoria, struct FRAME *areaMemoria, struct PageTable *PT, int id) {
-	int i;
 	int paginaEscolhida = EscolhePagina();
 
-	//(PaginaNaMemoria(PT, paginaEscolhida)) ? lru()  : printf("Page fault!\n");
-  
-	//(MemoriaCheia())? swap() : InsereNaMemoria();	
-	//se estiver, apenas atualiza a tabela de paginas para referencia
-	//se não estiver, verifica se memoria esta cheia.
-	/*if(memoriaCheia) {
-		SwapOut();
-	}*/
+	printf(KBLU "Processo[%d] solicitou pagina %d\n" KWHT, id, paginaEscolhida);
 
-	printf("Processo[%d] solicitou pagina.\n", id);
-	printf("Pagina escolhida: %d\n", paginaEscolhida);
 
   if(PaginaNaMemoria(PT, paginaEscolhida)) {
-    printf("Já está\n");
-    //atualiza a referência
+    printf(KGRN "--- Página já está na memória\n" KWHT);
+    LRU(id, memoria, areaMemoria, PT);
   } 
   else {
+    printf(KRED "--- Page fault\n" KWHT);
     if(MemoriaCheia(memoria)) {
-      printf("Faz Swap!!!!");
-      //swap();
+      Swap(memoria, areaMemoria);
     }
 
     InsereProcessoNaMemoria(memoria, PT);
-    //lru();
-
-    //else if(WorkingSetLivre(PT)) {
-    //  printf("Page fault\n");
-    //  printf("Adiciona nova página do processo %d na memória\n", id);
-    //  //Adiciona página na memória
-    //  //Atualiza referências no workingset
-    //  memoria->FramesOcupados++;
-    //  printf("frames ocupados: %d\n", memoria->FramesOcupados);
-    //}
-
-    //memoria cheia
+    LRU(id, memoria, areaMemoria, PT);
   }
 
-  //1. Verifica se página está na memória
-  //  1.1 Se estiver, só atualiza a referência
-  //  1.2 Senão
-  //    1.2.1 Verifica se memória está cheia e tamanho do workingset
-  //      1.2.1.2 Se memória está cheia
-  //        1.2.1.2.1 Faz swap
-  //      1.2.1.3 Se tem espaço na memória e tamanho do workingset = 4 faz o lru
-
-
-	for(i = id; i < TAM_MEM; i += 5) {
-		areaMemoria[i].NumProcesso = id;
-	}
+  printf("--- Frames da memória principal ocupados: %d\n", memoria->FramesOcupados);
+  printf("\n");
 }
 
 void ImprimeMemoria(struct FRAME *areaMemoria, int tamanho) {
 	int i;
 	for(i = 0; i < tamanho; i++) {
-		printf("[\t%d\t]\n", areaMemoria[i].Pagina);
+		printf("[%d]", areaMemoria[i].Pagina);
 	}
+  printf("\n");
 }
 
 void ImprimeMemoriaProcessos(struct Memoria *memoria) {
@@ -142,15 +117,44 @@ void Swap(struct Memoria *memoria, struct FRAME *memPrincipal) {
   int i;
   int id = memoria->ListaDeProcessos[memoria->ProcessoMaisAntigo];
 
+  printf("--- Fazendo Swap. Sai o processo %d\n", id);
+
   struct PageTable tabela = memoria->ListaDePaginas[id];
   
   for(i = 0; i < tabela.ValorWorkingset; i++) {
-    int pagina = tabela.PaginasMemoria[i]; 
-    int endereco = memoria.TabelaPaginas[pagina];
 
-    memPrincipal[endereco]->NumProcesso = -1;
-    memPrincipal[endereco]->Pagina = -1;
+    int pagina = tabela.PaginasMemoria[i].NumPagina; 
+    int endereco = tabela.TabelaPaginas[pagina];
+
+    memPrincipal[endereco].NumProcesso = -1;
+    memPrincipal[endereco].Pagina = -1;
+
+    memoria->FramesOcupados--;
   }
 
+  memoria->ProcessosNaMemoria--;
   memoria->ProcessoMaisAntigo = (memoria->ProcessoMaisAntigo + 1)% 20;
+}
+
+void ShiftPaginas(struct PageTable *PT) {
+  int i;
+  for(i = 0; i < PT->ValorWorkingset-2; i++) {
+    PT->PaginasMemoria[i-1] = PT->PaginasMemoria[i]; 
+  }
+}
+
+void LRU(int pagina, struct Memoria *memoria, struct FRAME* memPrincipal, struct PageTable *PT) {
+  if(PT->ValorWorkingset < PAGS_MEM) {
+    PT->PaginasMemoria[PT->ValorWorkingset].NumPagina = pagina; 
+    PT->ValorWorkingset++;
+    memoria->FramesOcupados++;
+  } else {
+    printf(KYEL "--- Workingset cheio.\n" KWHT);
+    ShiftPaginas(PT); 
+    PT->PaginasMemoria[PT->ValorWorkingset-1].NumPagina = pagina; 
+  }
+}
+
+void AtualizaReferencia(int pagina, struct PageTable *PT) {
+  
 }
