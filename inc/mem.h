@@ -36,8 +36,11 @@ void SolicitaPagina(struct Memoria *memoria, struct FRAME *memPrincipal, struct 
 void InsereProcessoNaMemoria(struct Memoria *memoria, struct FRAME* memPrincipal, struct PageTable *PT);
 
 int PrimeiraPosicaoVazia(struct Memoria *memoria);
+int Swap2(struct Memoria *memoria, struct FRAME *memPrincipal);
+void PreencheMemoria(struct FRAME *memPrincipal);
 
-void Swap(struct Memoria *memoria, struct FRAME *memPrincipal);
+int Swap(struct Memoria *memoria, struct FRAME *memPrincipal);
+int ProximoFrameLivre(struct FRAME *memPrincipal);
 
 void LRU(int pagina, struct Memoria *memoria, struct FRAME *memPrincipal, struct PageTable *PT);
 void AtualizaReferencia(int numPagina, struct PageTable *PT);

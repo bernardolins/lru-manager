@@ -15,8 +15,6 @@ pthread_mutex_t mutex;
 struct FRAME *memoria;
 struct Memoria memProcessos;
 
-int *frameLivre;
-
 //void PreencheTabela(struct PageTable *pt, int id) {
 //  int i;
 //
@@ -47,7 +45,7 @@ void *processo(void *arg) {
 	  SolicitaPagina(&memProcessos, memoria, &PT, id);
 	  pthread_mutex_unlock(&mutex);
 	  //ImprimeTabela(&PT, id);
-    //ImprimeMemoria(memoria, 64);
+    	ImprimeMemoria(memoria, 64);
 	  sleep(3); 	
   }
 
@@ -65,6 +63,7 @@ int main(int argc, char **argv) {
 
 	//==============================
 	memoria = AreaDeMemoria(TAM_MEM);
+	PreencheMemoria(memoria);
   memProcessos = InicializaMemoria();
 	//==============================
   //
