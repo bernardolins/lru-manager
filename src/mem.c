@@ -25,6 +25,7 @@ struct Memoria InicializaMemoria() {
 
   memoria.FramesOcupados = 0;
   memoria.ProcessoMaisAntigo = 0;
+  memoria.Contador = 0;
   memoria.ProcessosNaMemoria = 0;
 
   for(i = 0; i < NUM_PROC; i++) {
@@ -84,34 +85,53 @@ void PreencheMemoria(struct FRAME *memPrincipal) {
 }
 
 int Swap2(struct Memoria *memoria, struct FRAME *memPrincipal) {
+	memoria->ProcessoMaisAntigo = memoria->ListaDeProcessos[memoria->Contador];
 	int i;
 	int pag;
-	int frame;
-	int proximoFrame = 0;
-	int id = memoria->ListaDeProcessos[memoria->ProcessoMaisAntigo];
+	int frame = 0;
+	int proximoFrame = 100;
+	int id = memoria->ProcessoMaisAntigo;
 
 	printf(KMAG "--- Fazendo Swap. Sai o processo %d\n" KWHT, id);
 	
 	struct PageTable *tabela = memoria->ListaDePaginas[id];
+
 	
-	for(i = 0; i < tabela->ValorWorkingset; i++) {
+	int tam = tabela->ValorWorkingset;
+	for(i = 0; i < tam; i++) {
+		if(tabela->TabelaPaginas[tabela->PaginasMemoria[i].NumPagina] < proximoFrame) {
+			proximoFrame = tabela->TabelaPaginas[tabela->PaginasMemoria[i].NumPagina];
+		}
+	}
+	
+	for(i = 0; i < tam; i++) {
 		pag = tabela->PaginasMemoria[i].NumPagina; 
 		frame = tabela->TabelaPaginas[pag];
-		if(i == 0) {
-			proximoFrame = frame;	
-		}
 		memPrincipal[frame].NumProcesso = -1;
 		memPrincipal[frame].Pagina = -1;
 
-		memoria->Posicoes[pag] = 0;
+		tabela->TabelaPaginas[pag] = -1;
+		tabela->PaginasMemoria[i].NumPagina = -1;
+		tabela->ValorWorkingset--;
 		memoria->FramesOcupados--;
 	}
 
-	memoria->ProcessosNaMemoria--;
-	memoria->ProcessoMaisAntigo = (memoria->ProcessoMaisAntigo + 1)% 20;
-
+	//memoria->ProcessosNaMemoria--;
+	//memoria->ProcessoMaisAntigo = (memoria->ProcessoMaisAntigo + 1)% 20;
+	memoria->ListaDeProcessos[memoria->Contador] = -1;
+	memoria->Contador = (memoria->Contador + 1) % 20;
 	return proximoFrame;
 }
+
+void ImprimeProcessosMemoria(struct Memoria *memoria) {
+	int i;
+	printf("\t---- Lista de processos: [ ");
+	for(i = 0; i < NUM_PROC; i++) {
+		printf("%d ", memoria->ListaDeProcessos[i]);
+	}
+	printf("]\n");
+}
+
 
 void SolicitaPagina(struct Memoria *memoria, struct FRAME *memPrincipal, struct PageTable *PT, int id) {
 	int paginaEscolhida = EscolhePagina();
@@ -130,15 +150,22 @@ void SolicitaPagina(struct Memoria *memoria, struct FRAME *memPrincipal, struct 
       frameLivre = Swap2(memoria, memPrincipal);
     }
     else {
-	//frameLivre++;
 	frameLivre = ProximoFrameLivre(memPrincipal);
     }
-    memPrincipal[frameLivre].Pagina = paginaEscolhida;
-    memPrincipal[frameLivre].NumProcesso = id;
-    PT->TabelaPaginas[paginaEscolhida] = frameLivre;
-    memoria->FramesOcupados++;
+    
     InsereProcessoNaMemoria(memoria, memPrincipal, PT);
+   // LRU(paginaEscolhida, memoria, memPrincipal, PT);
+   if(PT->ValorWorkingset < 4) {
+	    memPrincipal[frameLivre].Pagina = paginaEscolhida;
+	    memPrincipal[frameLivre].NumProcesso = id;
+	    PT->TabelaPaginas[paginaEscolhida] = frameLivre;
+	    memoria->FramesOcupados++;
+    }
     LRU(paginaEscolhida, memoria, memPrincipal, PT);
+    if(PT->ValorWorkingset < 4) {
+	PT->ValorWorkingset++;
+    }
+    ImprimeProcessosMemoria(memoria);
   }
 
   printf("--- Frames da memória principal ocupados: %d\n", memoria->FramesOcupados);
@@ -159,7 +186,7 @@ int PrimeiraPosicaoVazia(struct Memoria *memoria) {
 void InsereProcessoNaMemoria(struct Memoria *memoria, struct FRAME* memPrincipal, struct PageTable *PT) {
   if(PT->ValorWorkingset == 0) {
     memoria->ListaDeProcessos[memoria->ProcessosNaMemoria] = PT->ID;
-    memoria->ProcessosNaMemoria++;
+    memoria->ProcessosNaMemoria = (memoria->ProcessosNaMemoria + 1) % NUM_PROC;
   }
 
 //  if(MemoriaCheia(memoria)) {
@@ -183,8 +210,12 @@ void InsereProcessoNaMemoria(struct Memoria *memoria, struct FRAME* memPrincipal
 }
 
 int Swap(struct Memoria *memoria, struct FRAME *memPrincipal) {
+  //bug aqui e no insereMemoria!!
+  printf("Cont = %d\n", memoria->Contador);
+  memoria->ProcessoMaisAntigo = memoria->ListaDeProcessos[memoria->Contador];
   int i;
-  int id = memoria->ListaDeProcessos[memoria->ProcessoMaisAntigo]; 
+  //int id = memoria->ListaDeProcessos[memoria->ProcessoMaisAntigo]; 
+  int id = memoria->ProcessoMaisAntigo;
   int proximoFrame = 0;
   printf(KMAG "--- Fazendo Swap. Sai o processo %d\n" KWHT, id);
 
@@ -207,29 +238,44 @@ int Swap(struct Memoria *memoria, struct FRAME *memPrincipal) {
   }
 
   memoria->ProcessosNaMemoria--;
-  memoria->ProcessoMaisAntigo = (memoria->ProcessoMaisAntigo + 1)% 20;
-	return proximoFrame;
+  //memoria->ProcessoMaisAntigo = (memoria->ProcessoMaisAntigo + 1)% 20;
+  memoria->Contador = (memoria->Contador + 1) % 20;
+  printf("Processo mais antigo agora: %d\n", memoria->ProcessoMaisAntigo);
+  return proximoFrame;
 }
 
-void LRU(int pagina, struct Memoria *memoria, struct FRAME* memPrincipal, struct PageTable *PT) {
+void LRU(int pagina, struct Memoria *memoria, struct FRAME *memPrincipal, struct PageTable *PT) {
   printf("\t---- Workingset antes: ");
   ImprimeWorkingset(PT);
-  
+  int frame = 0;
+  int paginaRetira = 0;
+
   if(PT->ValorWorkingset < PAGS_MEM) {
     if(PaginaNaMemoria(PT, pagina)) {
-      AtualizaReferencia(pagina, PT);   
-    } else {
-      PT->PaginasMemoria[PT->ValorWorkingset].NumPagina = pagina; 
-      PT->ValorWorkingset++;
+      AtualizaReferencia(pagina, PT);
+    } 
+    else {
+      PT->PaginasMemoria[PT->ValorWorkingset].NumPagina = pagina;
+      //PT->ValorWorkingset++;
       //memoria->FramesOcupados++;
     }
-  } else {
+  } 
+  else {
     if(PaginaNaMemoria(PT, pagina)) {
       AtualizaReferencia(pagina, PT);   
-    } else {
+    } 
+    else {
       printf(KYEL "--- Workingset cheio.\n" KWHT);
-      PT->PaginasMemoria[0].NumPagina = pagina; 
+      paginaRetira = PT->PaginasMemoria[0].NumPagina;
+      frame = PT->TabelaPaginas[paginaRetira];
+
+      PT->TabelaPaginas[paginaRetira] = -1;
+      memPrincipal[frame].Pagina = pagina;
+      PT->TabelaPaginas[pagina] = frame;
+      PT->PaginasMemoria[0].NumPagina = pagina;
+      
       AtualizaReferencia(pagina, PT);
+      
     }
   }
 

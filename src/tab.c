@@ -38,7 +38,7 @@ void ImprimeTabela(struct PageTable *PT, int id) {
 	printf("]\n\nTabela de Paginas:\n");
 	printf("[  Num Pagina\t|    Num Frame\t]\n");
 	for(i = 0; i < NUM_PAGS; i++) {
-		printf("[\t%d\t|\t\t]\n", PT->TabelaPaginas[i]);
+		printf("[\t%d\t|\t%d\t]\n", i, PT->TabelaPaginas[i]);
 	}
 	printf("\n=======================================\n");		
 }

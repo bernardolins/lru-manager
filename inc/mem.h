@@ -22,6 +22,7 @@ struct Memoria {
   int FramesOcupados;
   int ListaDeProcessos[NUM_PROC];
   int ProcessoMaisAntigo;
+  int Contador;
   int ProcessosNaMemoria;
   struct PageTable *ListaDePaginas[NUM_PROC];
 };
@@ -37,6 +38,7 @@ void InsereProcessoNaMemoria(struct Memoria *memoria, struct FRAME* memPrincipal
 
 int PrimeiraPosicaoVazia(struct Memoria *memoria);
 int Swap2(struct Memoria *memoria, struct FRAME *memPrincipal);
+void ImprimeProcessoMemoria(struct Memoria *memoria);
 void PreencheMemoria(struct FRAME *memPrincipal);
 
 int Swap(struct Memoria *memoria, struct FRAME *memPrincipal);

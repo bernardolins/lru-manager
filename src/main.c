@@ -38,14 +38,13 @@ void *processo(void *arg) {
 
 	struct PageTable PT = IniciaTabela(id);
   //PreencheTabela(&PT, id);
-  memProcessos.ListaDePaginas[id] = &PT;
-
+        memProcessos.ListaDePaginas[id] = &PT;
   while(1) {
 	  pthread_mutex_lock(&mutex);
 	  SolicitaPagina(&memProcessos, memoria, &PT, id);
 	  pthread_mutex_unlock(&mutex);
-	  //ImprimeTabela(&PT, id);
-    	ImprimeMemoria(memoria, 64);
+	 // ImprimeTabela(&PT, id);
+    	  ImprimeMemoria(memoria, TAM_MEM);
 	  sleep(3); 	
   }
 
@@ -64,7 +63,7 @@ int main(int argc, char **argv) {
 	//==============================
 	memoria = AreaDeMemoria(TAM_MEM);
 	PreencheMemoria(memoria);
-  memProcessos = InicializaMemoria();
+        memProcessos = InicializaMemoria();
 	//==============================
   //
 	for(i = 0; i < NUM_PROC; i++) {
