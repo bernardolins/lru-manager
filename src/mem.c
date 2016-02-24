@@ -110,7 +110,7 @@ int Swap2(struct Memoria *memoria, struct FRAME *memPrincipal) {
 		memPrincipal[frame].NumProcesso = -1;
 		memPrincipal[frame].Pagina = -1;
 
-		tabela->TabelaPaginas[pag] = -1;
+		tabela->TabelaPaginas[pag] = -2;
 		tabela->PaginasMemoria[i].NumPagina = -1;
 		tabela->ValorWorkingset--;
 		memoria->FramesOcupados--;
@@ -156,6 +156,10 @@ void SolicitaPagina(struct Memoria *memoria, struct FRAME *memPrincipal, struct 
     InsereProcessoNaMemoria(memoria, memPrincipal, PT);
    // LRU(paginaEscolhida, memoria, memPrincipal, PT);
    if(PT->ValorWorkingset < 4) {
+	    if(PT->TabelaPaginas[paginaEscolhida] == -2) {
+		printf("\t---- Buscando pagina %d no DISCO!.\n", paginaEscolhida);
+		sleep(2);
+	    }
 	    memPrincipal[frameLivre].Pagina = paginaEscolhida;
 	    memPrincipal[frameLivre].NumProcesso = id;
 	    PT->TabelaPaginas[paginaEscolhida] = frameLivre;
@@ -297,7 +301,12 @@ void AtualizaReferencia(int pagina, struct PageTable *PT) {
 void ImprimeMemoria(struct FRAME *memPrincipal, int tamanho) {
 	int i;
 	for(i = 0; i < tamanho; i++) {
-		printf("[P%d.%d]", memPrincipal[i].NumProcesso, memPrincipal[i].Pagina);
+		if(memPrincipal[i].NumProcesso == -1) {
+			printf("["KCYN"P%d.%d"KWHT"]", memPrincipal[i].NumProcesso, memPrincipal[i].Pagina);
+		}
+		else { 
+			printf("[P%d.%d]", memPrincipal[i].NumProcesso, memPrincipal[i].Pagina);
+		}
 	}
   printf("\n");
 }

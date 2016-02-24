@@ -8,7 +8,7 @@
 #include<time.h>
 #include<unistd.h>
 
-#define TAM_MEM 64
+#define TAM_MEM 15
 
 #define NUM_PROC 20
 
