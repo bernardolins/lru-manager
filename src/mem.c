@@ -167,7 +167,9 @@ void SolicitaPagina(struct Memoria *memoria, struct FRAME *memPrincipal, struct 
     }
     LRU(paginaEscolhida, memoria, memPrincipal, PT);
     if(PT->ValorWorkingset < 4) {
-	PT->ValorWorkingset++;
+	    PT->ValorWorkingset++;
+      printf("\t---- Workingset depois: ");
+      ImprimeWorkingset(PT);
     }
     ImprimeProcessosMemoria(memoria);
   }
@@ -283,8 +285,6 @@ void LRU(int pagina, struct Memoria *memoria, struct FRAME *memPrincipal, struct
     }
   }
 
-  printf("\t---- Workingset depois: ");
-  ImprimeWorkingset(PT);
 }
 
 void AtualizaReferencia(int pagina, struct PageTable *PT) {
